@@ -76,9 +76,8 @@ public class BobMathUtil {
 				);
 	}
 
-	public static double interp(double x, double y, float interp) {
-		return x + (y - x) * interp;
-	}
+	public static double interp(double x, double y, float interp) { return x + (y - x) * interp; }
+	public static double interp(double x, double y, double interp) { return x + (y - x) * interp; }
 
 	public static double getAngleFrom2DVecs(double x1, double z1, double x2, double z2) {
 
@@ -187,6 +186,14 @@ public class BobMathUtil {
 			throw new IllegalArgumentException("Attempted negative number in non-negative field! Attempted value: " + digits);
 
 		return new BigDecimal(num).setScale(digits, RoundingMode.HALF_UP).doubleValue();
+	}
+	
+	/**
+	 * @param amount
+	 * @return the number as a string with thousand group commas
+	 */
+	public static String format(int amount) {
+		return String.format(Locale.US, "%,d", amount);
 	}
 
 	public static boolean getBlink() {
@@ -326,6 +333,25 @@ public class BobMathUtil {
 			return start;
 		} else {
 			return delta > 1.0D ? end : lerp(delta, start, end);
+		}
+	}
+
+	public static void shuffleIntArray(int[] array) {
+		Random rand = new Random();
+		for(int i = array.length - 1; i > 0; i--) {
+			int r = rand.nextInt(i + 1);
+			int temp = array[r];
+			array[r] = array[i];
+			array[i] = temp;
+		}
+	}
+
+	public static void reverseIntArray(int[] array) {
+		int len = array.length;
+		for(int i = 0; i < len / 2; i++) {
+			int temp = array[i];
+			array[i] = array[len - 1 - i];
+			array[len - 1 - i] = temp;
 		}
 	}
 

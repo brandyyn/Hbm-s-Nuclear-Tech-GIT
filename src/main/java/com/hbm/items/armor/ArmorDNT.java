@@ -11,13 +11,12 @@ import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.render.model.ModelArmorDNT;
 import com.hbm.util.ArmorUtil;
 import com.hbm.util.BobMathUtil;
-import com.hbm.util.I18nUtil;
+import com.hbm.util.i18n.I18nUtil;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -107,13 +106,21 @@ public class ArmorDNT extends ArmorFSBPowered {
 					player.motionY += 0.4D;
 				else if(player.motionY < -0.1)
 					player.motionY += 0.2D;
+				else if(player.motionY > 0.1)
+					player.motionY -= 0.2D;
+				else if(player.motionY > 1)
+					player.motionY -= 0.4D;
 				else if(player.motionY < 0)
 					player.motionY = 0;
 
-				player.motionX *= 1.05D;
-				player.motionZ *= 1.05D;
+				// Only reduce air friction if actively moving
+				if(player.moveForward != 0 || player.moveStrafing != 0) {
+					player.motionX *= 1.05D;
+					player.motionZ *= 1.05D;
+				}
 
-				if(player.moveForward != 0) {
+				// Only apply flight boost when holding sprint key
+				if(player.moveForward != 0 && player.isSprinting()) {
 					player.motionX += player.getLookVec().xCoord * 0.25 * player.moveForward;
 					player.motionZ += player.getLookVec().zCoord * 0.25 * player.moveForward;
 				}
@@ -176,7 +183,7 @@ public class ArmorDNT extends ArmorFSBPowered {
 		list.add("Charge: " + BobMathUtil.getShortNumber(getCharge(stack)) + " / " + BobMathUtil.getShortNumber(this.getMaxCharge(stack)));
 
 		if(canSeal) {
-			list.add(EnumChatFormatting.BLUE + "" + I18n.format("armor.canSeal"));
+			list.add(EnumChatFormatting.BLUE + "" + I18nUtil.format("armor.canSeal"));
 		}
 
 		list.add(EnumChatFormatting.GOLD + I18nUtil.resolveKey("armor.fullSetBonus"));
@@ -184,7 +191,7 @@ public class ArmorDNT extends ArmorFSBPowered {
 		if(!effects.isEmpty()) {
 
 			for(PotionEffect effect : effects) {
-				list.add(EnumChatFormatting.AQUA + "  " + I18n.format(Potion.potionTypes[effect.getPotionID()].getName()));
+				list.add(EnumChatFormatting.AQUA + "  " + I18nUtil.format(Potion.potionTypes[effect.getPotionID()].getName()));
 			}
 		}
 

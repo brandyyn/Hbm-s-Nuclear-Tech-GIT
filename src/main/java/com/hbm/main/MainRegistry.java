@@ -14,6 +14,7 @@ import com.hbm.entity.logic.IChunkLoader;
 import com.hbm.entity.mob.siege.SiegeTier;
 import com.hbm.handler.*;
 import com.hbm.handler.atmosphere.ChunkAtmosphereManager;
+import com.hbm.handler.ae2.AE2CompatHandler;
 import com.hbm.handler.imc.IMCBlastFurnace;
 import com.hbm.handler.imc.IMCCentrifuge;
 import com.hbm.handler.imc.IMCCrystallizer;
@@ -145,7 +146,7 @@ public class MainRegistry {
 	public static ToolMaterial enumToolMaterialBatNail = EnumHelper.addToolMaterial("BATNAIL", 0, 450, 1.0F, 4F, 25);
 	public static ToolMaterial enumToolMaterialGolfClub = EnumHelper.addToolMaterial("GOLFCLUB", 1, 1000, 2.0F, 5F, 25);
 	public static ToolMaterial enumToolMaterialPipeRusty = EnumHelper.addToolMaterial("PIPERUSTY", 1, 350, 1.5F, 4.5F, 25);
-	public static ToolMaterial enumToolMaterialPipeLead = EnumHelper.addToolMaterial("PIPELEAD", 1, 250, 1.5F, 5.5F, 25);
+	public static ToolMaterial enumToolMaterialPipeLead = EnumHelper.addToolMaterial("PIPELEAD", 1, 250, 1.5F, 3F, 25);
 
 	public static ToolMaterial enumToolMaterialBottleOpener = EnumHelper.addToolMaterial("OPENER", 1, 250, 1.5F, 0.5F, 200);
 	public static ToolMaterial enumToolMaterialSledge = EnumHelper.addToolMaterial("SHIMMERSLEDGE", 1, 0, 25.0F, 26F, 200);
@@ -285,7 +286,7 @@ public class MainRegistry {
 				polaroidID = rand.nextInt(18) + 1;
 		}
 
-		//ShadyUtil.test();
+		ShadyUtil.test();
 		loadConfig(PreEvent);
 		HbmPotion.init();
 
@@ -318,6 +319,7 @@ public class MainRegistry {
 		OreDictManager.registerOres();
 
 		if(WorldConfig.enableCraterBiomes) BiomeGenCraterBase.initDictionary();
+		//BiomeGenNoMansLand.initDictionary();
 
 		aMatSchrab.customCraftingMaterial = ModItems.ingot_schrabidium;
 		aMatHaz.customCraftingMaterial = ModItems.hazmat_cloth;
@@ -763,7 +765,7 @@ public class MainRegistry {
 		achBlastFurnace = new Achievement("achievement.blastFurnace", "blastFurnace", 1, 3, new ItemStack(ModBlocks.machine_difurnace_off), achBurnerPress).initIndependentStat().registerStat();
 		achAssembly = new Achievement("achievement.assembly", "assembly", 3, -1, new ItemStack(ModBlocks.machine_assembler), achBurnerPress).initIndependentStat().registerStat();
 		achSelenium = new Achievement("achievement.selenium", "selenium", 3, 2, ModItems.ingot_starmetal, achBurnerPress).initIndependentStat().setSpecial().registerStat();
-		achChemplant = new Achievement("achievement.chemplant", "chemplant", 6, -1, new ItemStack(ModBlocks.machine_chemplant), achAssembly).initIndependentStat().registerStat();
+		achChemplant = new Achievement("achievement.chemplant", "chemplant", 6, -1, new ItemStack(ModBlocks.machine_chemical_plant), achAssembly).initIndependentStat().registerStat();
 		achConcrete	= new Achievement("achievement.concrete", "concrete", 6, -4, new ItemStack(ModBlocks.concrete), achChemplant).initIndependentStat().registerStat();
 		achPolymer = new Achievement("achievement.polymer", "polymer", 9, -1, ModItems.ingot_polymer, achChemplant).initIndependentStat().registerStat();
 		achDesh = new Achievement("achievement.desh", "desh", 9, 2, ModItems.ingot_desh, achChemplant).initIndependentStat().registerStat();
@@ -932,6 +934,9 @@ public class MainRegistry {
 		// Load compatibility for OC.
 		CompatHandler.init();
 
+		// Load compatibility for AE2.
+		AE2CompatHandler.init();
+
 		//expand for the largest entity we have (currently Quackos who is 17.5m in diameter, that's one fat duck)
 		World.MAX_ENTITY_RADIUS = Math.max(World.MAX_ENTITY_RADIUS, 8.75);
 
@@ -958,6 +963,7 @@ public class MainRegistry {
 
 		// Ike caves + layers
 		if(WorldConfig.enableSulfurCave) new OreCave(ModBlocks.stone_resource, EnumStoneType.SULFUR.ordinal()).setDimension(SpaceConfig.ikeDimension).setThreshold(1.5D).setRangeMult(20).setYLevel(30).setMaxRange(20);
+		new OreLayer3D(ModBlocks.stone_resource, EnumStoneType.CONGLOMERATE.ordinal()).setDimension(SpaceConfig.ikeDimension).setScaleH(0.04D).setScaleV(0.25D).setThreshold(220);
 
 		// Eve caves + layers
 		if(WorldConfig.enableSulfurCave) new OreCave(ModBlocks.stone_resource, EnumStoneType.SULFUR.ordinal()).setDimension(SpaceConfig.eveDimension).setThreshold(1.5D).setRangeMult(20).setYLevel(30).setMaxRange(20).withFluid(ModBlocks.sulfuric_acid_block);
@@ -970,6 +976,7 @@ public class MainRegistry {
 		if(WorldConfig.enableSulfurCave) new OreCave(ModBlocks.stone_resource, EnumStoneType.SULFUR.ordinal()).setDimension(SpaceConfig.minmusDimension).setThreshold(1.5D).setRangeMult(20).setYLevel(30).setMaxRange(20);
 		new OreLayer3D(ModBlocks.minmus_regolith, 0).setDimension(SpaceConfig.minmusDimension).setScaleH(0.06D).setScaleV(0.25D).setThreshold(220);
 		new OreLayer3D(ModBlocks.minmus_smooth, 0).setDimension(SpaceConfig.minmusDimension).setScaleH(0.05D).setScaleV(0.15D).setThreshold(280);
+		new OreLayer3D(ModBlocks.stone_resource, EnumStoneType.CONGLOMERATE.ordinal()).setDimension(SpaceConfig.minmusDimension).setScaleH(0.04D).setScaleV(0.25D).setThreshold(220);
 
 		// Laythe caves + layers
 		if(WorldConfig.enableSulfurCave) new OreCave(ModBlocks.stone_resource, EnumStoneType.SULFUR.ordinal()).setDimension(SpaceConfig.laytheDimension).setThreshold(1.5D).setRangeMult(20).setYLevel(30).setMaxRange(20).withFluid(ModBlocks.sulfuric_acid_block);
@@ -979,12 +986,17 @@ public class MainRegistry {
 		new OreCave(ModBlocks.laythe_silt, 3).setDimension(SpaceConfig.laytheDimension).setThreshold(0.2D).setRangeMult(60).setYLevel(58).setMaxRange(14).setBlockOverride(ModBlocks.laythe_silt).setIgnoreWater(true).setStalagmites(false);
 
 		BedrockOre.init();
+		PlanetGen.overrideOverworldProvider(); // Doing it as late as possible
 
 		Compat.handleRailcraftNonsense();
 		SuicideThreadDump.register();
 		CommandReloadClient.register();
 
 		WorldTypeTeleport.init();
+
+		// to make sure that foreign registered fluids are accounted for,
+		// even when the reload listener is registered too late due to load order
+		Fluids.reloadFluids();
 
 		//ExplosionTests.runTest();
 	}
@@ -1758,15 +1770,41 @@ public class MainRegistry {
 		ignoreMappings.add("hbm:item.bobmazon_weapons");
 		ignoreMappings.add("hbm:item.bobmazon_tools");
 		ignoreMappings.add("hbm:item.missile_carrier");
+		ignoreMappings.add("hbm:item.magnet_circular");
+		ignoreMappings.add("hbm:item.mechanism_revolver_1");
+		ignoreMappings.add("hbm:item.mechanism_revolver_2");
+		ignoreMappings.add("hbm:item.mechanism_rifle_1");
+		ignoreMappings.add("hbm:item.mechanism_rifle_2");
+		ignoreMappings.add("hbm:item.mechanism_launcher_1");
+		ignoreMappings.add("hbm:item.mechanism_launcher_2");
+		ignoreMappings.add("hbm:item.mechanism_special");
+		ignoreMappings.add("hbm:tile.transission_hatch");
+		ignoreMappings.add("hbm:tile.machine_nuke_furnace_off");
+		ignoreMappings.add("hbm:tile.machine_nuke_furnace_on");
+		ignoreMappings.add("hbm:item.singularity_micro");
 		ignoreMappings.add("hbm:item.alloy_knife");
 		ignoreMappings.add("hbm:tile.hazmat");
+		ignoreMappings.add("hbm:item.gun_cryocannon");
+		ignoreMappings.add("hbm:item.gun_cryolator_ammo");
+		ignoreMappings.add("hbm:item.canteen_fab");
+		ignoreMappings.add("hbm:item.fabsols_vodka");
+		ignoreMappings.add("hbm:item.test_nuke_igniter");
+		ignoreMappings.add("hbm:item.test_nuke_propellant");
+		ignoreMappings.add("hbm:item.test_nuke_tier1_shielding");
+		ignoreMappings.add("hbm:item.test_nuke_tier2_shielding");
+		ignoreMappings.add("hbm:item.test_nuke_tier1_bullet");
+		ignoreMappings.add("hbm:item.test_nuke_tier2_bullet");
+		ignoreMappings.add("hbm:item.test_nuke_tier1_target");
+		ignoreMappings.add("hbm:item.test_nuke_tier2_target");
+		ignoreMappings.add("hbm:tile.hadron_cooler");
+		ignoreMappings.add("hbm:tile.machine_transformer_20");
+		ignoreMappings.add("hbm:tile.machine_transformer_dnt_20");
 
 		/// REMAP ///
 		remapItems.put("hbm:item.gadget_explosive8", ModItems.early_explosive_lenses);
 		remapItems.put("hbm:item.man_explosive8", ModItems.explosive_lenses);
 		remapItems.put("hbm:item.briquette_lignite", ModItems.briquette);
 		remapItems.put("hbm:item.antiknock", ModItems.fuel_additive);
-
 		remapItems.put("hbm:item.kit_toolbox_empty", ModItems.toolbox);
 		remapItems.put("hbm:item.kit_toolbox", ModItems.legacy_toolbox);
 
@@ -1784,7 +1822,6 @@ public class MainRegistry {
 			}
 
 			if(mapping.type == GameRegistry.Type.ITEM) {
-
 				if(remapItems.get(mapping.name) != null) {
 					mapping.remap(remapItems.get(mapping.name));
 					continue;

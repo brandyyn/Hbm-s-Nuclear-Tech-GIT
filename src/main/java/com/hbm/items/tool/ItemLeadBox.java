@@ -2,7 +2,7 @@ package com.hbm.items.tool;
 
 import com.hbm.inventory.container.ContainerLeadBox;
 import com.hbm.inventory.gui.GUILeadBox;
-import com.hbm.items.IItemInventory;
+import com.hbm.items.ItemInventory;
 import com.hbm.main.MainRegistry;
 import com.hbm.tileentity.IGUIProvider;
 import com.hbm.util.ItemStackUtil;
@@ -29,7 +29,6 @@ public class ItemLeadBox extends Item implements IGUIProvider {
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-
 		if(!world.isRemote) player.openGui(MainRegistry.instance, 0, world, 0, 0, 0);
 		return stack;
 	}
@@ -45,7 +44,7 @@ public class ItemLeadBox extends Item implements IGUIProvider {
 		return new GUILeadBox(player.inventory, new InventoryLeadBox(player, player.getHeldItem()));
 	}
 
-	public static class InventoryLeadBox extends IItemInventory {
+	public static class InventoryLeadBox extends ItemInventory {
 
 		public InventoryLeadBox(EntityPlayer player, ItemStack box) {
 			this.player = player;
@@ -58,13 +57,8 @@ public class ItemLeadBox extends Item implements IGUIProvider {
 			ItemStack[] fromNBT = ItemStackUtil.readStacksFromNBT(box, slots.length);
 
 			if(fromNBT != null) {
-				for(int i = 0; i < slots.length; i++) {
-					slots[i] = fromNBT[i];
-				}
+				System.arraycopy(fromNBT, 0, slots, 0, slots.length);
 			}
-			toMarkDirty = true;
-			this.markDirty();
-			toMarkDirty = false;
 		}
 
 		@Override

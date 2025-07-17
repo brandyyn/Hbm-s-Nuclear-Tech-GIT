@@ -8,6 +8,7 @@ import com.hbm.handler.threading.PacketThreading;
 import com.hbm.inventory.fluid.FluidType;
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.util.AstronomyUtil;
+import com.hbm.util.ArmorUtil;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.relauncher.Side;
@@ -16,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class JetpackRegular extends JetpackFueledBase {
@@ -45,15 +47,23 @@ public class JetpackRegular extends JetpackFueledBase {
 		}
 
 		if(getFuel(stack) > 0 && props.isJetpackActive()) {
-			float gravity = Math.max(CelestialBody.getBody(world).getSurfaceGravity(), AstronomyUtil.STANDARD_GRAVITY);
+			float gravity = CelestialBody.getGravity(player);
 
 			player.fallDistance = 0;
 
-			if(player.motionY < 0.4D)
-				player.motionY += 0.1D * (gravity * AstronomyUtil.PLAYER_GRAVITY_MODIFIER);
+			if(gravity == 0) {
+				Vec3 look = player.getLookVec();
+
+				player.motionX += look.xCoord * 0.05;
+				player.motionY += look.yCoord * 0.05;
+				player.motionZ += look.zCoord * 0.05;
+			} else if(player.motionY < 0.4D) {
+				player.motionY += 0.1D * Math.max(gravity / AstronomyUtil.STANDARD_GRAVITY, 1);
+			}
 
 			world.playSoundEffect(player.posX, player.posY, player.posZ, "hbm:weapon.flamethrowerShoot", 0.25F, 1.5F);
 			this.useUpFuel(player, stack, 5);
+			ArmorUtil.resetFlightTime(player);
 		}
 	}
 

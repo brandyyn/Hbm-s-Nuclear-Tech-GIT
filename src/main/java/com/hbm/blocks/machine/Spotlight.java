@@ -1,6 +1,8 @@
 package com.hbm.blocks.machine;
 
 import com.hbm.blocks.ModBlocks;
+import com.hbm.dim.CelestialBody;
+import com.hbm.dim.trait.CBT_Lights;
 
 import java.util.Random;
 
@@ -14,6 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -44,7 +47,7 @@ public class Spotlight extends Block implements ISpotlight, INBTTransformable {
 		this.type = type;
 		this.isOn = isOn;
 
-		this.setHardness(1F);
+		this.setHardness(0.5F);
 
 		if(isOn) setLightLevel(1.0F);
 	}
@@ -80,6 +83,17 @@ public class Spotlight extends Block implements ISpotlight, INBTTransformable {
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
+
+	@Override
+	// Ah yes, I love methods named the literal opposite of what they do
+	public boolean getBlocksMovement(IBlockAccess world, int x, int y, int z) {
+		return true;
+	}
+
+	@Override
+	public MapColor getMapColor(int meta) {
+        return MapColor.airColor;
+    }
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_) {
@@ -238,6 +252,17 @@ public class Spotlight extends Block implements ISpotlight, INBTTransformable {
 		if(!isBroken(meta)) return;
 
 		world.setBlock(x, y, z, getOn(), meta - 1, 2);
+
+		if(!world.isRemote) {
+			// gwa gwa
+			CelestialBody body = CelestialBody.getBody(world);
+			CBT_Lights lights = body.getTrait(CBT_Lights.class);
+
+			if(lights == null) lights = new CBT_Lights();
+			lights.addLight(getOn(), x, y, z);
+
+			body.modifyTraits(lights);
+		}
 
 		for(ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			int ox = x + dir.offsetX;

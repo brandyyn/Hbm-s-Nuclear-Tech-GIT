@@ -9,6 +9,7 @@ import com.hbm.inventory.fluid.FluidType;
 
 import com.hbm.packet.toclient.AuxParticlePacketNT;
 import com.hbm.util.AstronomyUtil;
+import com.hbm.util.ArmorUtil;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.relauncher.Side;
@@ -48,10 +49,10 @@ public class JetpackBooster extends JetpackFueledBase {
 		}
 
 		if(getFuel(stack) > 0 && props.isJetpackActive()) {
-			float gravity = Math.min(CelestialBody.getBody(world).getSurfaceGravity(), AstronomyUtil.STANDARD_GRAVITY);
+			float gravity = CelestialBody.getGravity(player);
 
 			if(player.motionY < 0.6D)
-				player.motionY += 0.1D * (gravity * AstronomyUtil.PLAYER_GRAVITY_MODIFIER);
+				player.motionY += 0.1D * Math.min(gravity / AstronomyUtil.STANDARD_GRAVITY, 1);
 
 			Vec3 look = player.getLookVec();
 
@@ -66,6 +67,7 @@ public class JetpackBooster extends JetpackFueledBase {
 
 			world.playSoundEffect(player.posX, player.posY, player.posZ, "hbm:weapon.flamethrowerShoot", 0.25F, 1.0F);
 			this.useUpFuel(player, stack, 1);
+			ArmorUtil.resetFlightTime(player);
 		}
 	}
 
